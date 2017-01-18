@@ -1,3 +1,4 @@
+
 version: '2'
 
 services:
@@ -26,3 +27,14 @@ services:
   redis:
     image: redis
 
+  omsagent:
+    image: "microsoft/oms"
+    privileged: true
+    ports:
+      - "25225:25225"
+    volumes:  
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WSID: <replace>
+      KEY:  <replace>
+    restart: on-failure
