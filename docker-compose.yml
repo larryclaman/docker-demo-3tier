@@ -1,4 +1,18 @@
-
+########
+# Instructions:
+# 1) you must start docker-compose with the project name '3tier', e.g:
+#     docker-compose -p 3tier up -docker
+# This enables the load balancer to find the web services#
+#
+# 2) you need to run the load balancer service on each node in the swarm cluster
+# eg if you have a 3 node cluster, you should run:
+#     docker-compose -p 3tier scale lb=3
+#
+# 3) after scaling out the web tier (docker-compose -p 3tier scale web=9),
+# you may need restart the load balancer. e.g
+#     docker-compose -p 3tier restart lb
+#
+ 
 version: '2'
 
 services:
@@ -10,12 +24,13 @@ services:
     - "8080:80"
    environment:
     - BALANCE=roundrobin
-    - ADDITIONAL_SERVICES=dockermyappacs:web
-   links:
-    - web
+    - ADDITIONAL_SERVICES=3tier:web
+   depends_on:
+     - web
+#   links:
+#    - web
    volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
- 
+    - "/var/run/docker.sock:/var/run/docker.sock"
   web:
 #    build: .
     image: larryms/lnchello
